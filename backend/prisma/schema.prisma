@@ -1,0 +1,38 @@
+// Prisma schema for Active Community
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Status {
+  REGISTRADO
+  EM_ANALISE
+  RESOLVIDO
+}
+
+model Ocorrencia {
+  id        Int      @id @default(autoincrement())
+  titulo    String
+  categoria String
+  descricao String
+  local     String
+  status    Status   @default(REGISTRADO)
+  createdAt DateTime @default(now())
+
+  @@map("ocorrencias")
+}
+
+model Admin {
+  id        Int      @id @default(autoincrement())
+  nome      String
+  email     String   @unique
+  senha     String
+  createdAt DateTime @default(now())
+
+  @@map("admins")
+}

@@ -1,0 +1,22 @@
+{
+  "version": 2,
+  "buildCommand": "npx prisma generate",
+  "rewrites": [
+    {
+      "source": "/api/ocorrencias/:id/status",
+      "destination": "/api/ocorrencias/[id]"
+    },
+    {
+      "source": "/api/ocorrencias/:id",
+      "destination": "/api/ocorrencias/[id]"
+    },
+    {
+      "source": "/api/ocorrencias",
+      "destination": "/api/ocorrencias/index"
+    },
+    {
+      "source": "/api/admin/login",
+      "destination": "/api/admin/login"
+    }
+  ]
+}
