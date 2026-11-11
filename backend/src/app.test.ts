@@ -1,3 +1,4 @@
+
 import request from 'supertest';
 import app from './app';
 import { ocorrenciaService } from './services/ocorrencia.service';
@@ -7,6 +8,7 @@ jest.mock('./services/ocorrencia.service');
 describe('API REST Endpoints (/api/ocorrencias)', () => {
   afterEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   describe('GET /api/health', () => {
@@ -53,6 +55,8 @@ describe('API REST Endpoints (/api/ocorrencias)', () => {
     });
 
     it('deve retornar 500 caso o serviço lance um erro inesperado', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+
       (ocorrenciaService.listarTodas as jest.Mock).mockRejectedValue(
         new Error('Falha no banco')
       );

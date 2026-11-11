@@ -1,3 +1,4 @@
+
 import request from 'supertest';
 import app from './app';
 import { adminService } from './services/admin.service';
@@ -15,6 +16,7 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     jest.clearAllMocks();
   });
 
@@ -37,7 +39,10 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('token', 'fake-jwt-token');
-      expect(response.body.admin).toHaveProperty('email', 'admin@activecommunity.com');
+      expect(response.body.admin).toHaveProperty(
+        'email',
+        'admin@activecommunity.com'
+      );
     });
 
     it('deve retornar 400 se e-mail ou senha não forem fornecidos', async () => {
@@ -69,6 +74,7 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
   describe('GET /api/admin/me', () => {
     it('deve retornar 401 se nenhum token for fornecido', async () => {
       const response = await request(app).get('/api/admin/me');
+
       expect(response.status).toBe(401);
     });
 
@@ -85,7 +91,10 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', 1);
-      expect(response.body).toHaveProperty('email', 'admin@activecommunity.com');
+      expect(response.body).toHaveProperty(
+        'email',
+        'admin@activecommunity.com'
+      );
     });
   });
 
@@ -96,7 +105,9 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
         .send({ status: 'EM_ANALISE' });
 
       expect(response.status).toBe(401);
-      expect(response.body.message).toContain('Acesso restrito a administradores');
+      expect(response.body.message).toContain(
+        'Acesso restrito a administradores'
+      );
     });
 
     it('deve bloquear com token malformado (401)', async () => {
@@ -129,10 +140,14 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
         .send({ status: 'EM_ANALISE' });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toContain('Identificador de ocorrência inválido');
+      expect(response.body.message).toContain(
+        'Identificador de ocorrência inválido'
+      );
     });
 
     it('deve retornar 404 se a ocorrência não existir', async () => {
+      jest.spyOn(console, 'error').mockImplementation(() => {});
+
       (ocorrenciaService.atualizarStatus as jest.Mock).mockRejectedValue(
         new Error('Ocorrência não encontrada.')
       );
@@ -157,7 +172,9 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
         createdAt: new Date().toISOString(),
       };
 
-      (ocorrenciaService.atualizarStatus as jest.Mock).mockResolvedValue(mockAtualizada);
+      (ocorrenciaService.atualizarStatus as jest.Mock).mockResolvedValue(
+        mockAtualizada
+      );
 
       const response = await request(app)
         .patch('/api/ocorrencias/1/status')
@@ -166,7 +183,10 @@ describe('Administração e Autenticação (/api/admin e PATCH /api/ocorrencias/
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('status', 'RESOLVIDO');
-      expect(ocorrenciaService.atualizarStatus).toHaveBeenCalledWith(1, 'RESOLVIDO');
+      expect(ocorrenciaService.atualizarStatus).toHaveBeenCalledWith(
+        1,
+        'RESOLVIDO'
+      );
     });
   });
 });
